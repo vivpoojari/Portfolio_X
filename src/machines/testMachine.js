@@ -1,7 +1,9 @@
 import { createMachine, assign } from "xstate";
 
+const api_url = process.env.REACT_APP_DUMMYJSON_API
+
 export const loginMachine = 
-/** @xstate-layout N4IgpgJg5mDOIC5QBkD2UCWA7AsgQwGMALbMAOmwwBcM8AbAYmQHkBxASQDkBtABgF1EoAA6pY1DKixCQAD0QB2ABxkFARgBsCgJwbtatQBYAzACYlAGhABPRAFpNhsod691Sw2oCsn3toC+-lZomLiEJFjkdOihUOxYDBBS5NgAbqgA1uQh2PjEpGTRULHxCGmoBHg0Unz8tTKi4tXSSHKISqZkSo4e6urGegpWtghqvGpkatoKCsZe3WNTGoaBwei54QVFJQlgAE57qHtkwnRVAGZHALZkOWH5kYUx2HFYZVjplc219a2NElIZPIEGYJqZeBpTNNvB4lHDhvY1AoyF45holMYMX4jJiFKsQHc8hEojFIPEmGxmABVAAqvxEYgBLVAwIcvGMZDcvB8UNMXnMXh8CNGOlUplMmh0Ch8Rm8+MJm0e2zJWDIADUMGAAO4vAAEABE8LAiAAjVB4PYQBgAUQg1F1AAVDucMHQwPSQP9mkDECZnNoIeyvApDPCbL7NGQNMY1BLtF5NEYFKZ5et7sSnsUVWRbRIsFBHc7XWAGABlPCpMAAYSIeHzcA9XskzLaCDsMa60w04xmpmMCnRvFMwo0YzIcfG3lRfOmqdCRK2pIg8Rzdpo+cLqBdboY+owsEqlsbjO9rVZhi8nN4vgHhgH0eM1+Fd40k3BUKU2m0cKUXgCQQJNMFyVJcVz2MAAEcAFc4CoXMqESZIKA+TJsiAxUSSzZdVXA6DYPg95PiqZsfgEBoT2bH02yncdP1MQdUUMbtvGFEMOXmIcv1HVF5jnDYHkwmBsLIXCYNgOC1wYfZDmOU4LmuW50IEzMhLAyCxIk6hCIqYiagEY8mkos9EG8ZFDBMW8+yRP9tBHAwxQxENR3FCU8QAhVlOVYT4Jea0DiOSAGAAJWtGkgoATQMpkqLUJReFUC9fylPluSY59jCcMxzO-IxejldylIzbYXmYKCEKSR5yiyRT5wwlSSrK7SvhI-SyL+CjAWM6iEzIfRNHMFLv1DYU7D5JxoVjaM4W8SEUwK2rPOefNSoQ6SjhOM4qEuPYbg8oqlqgFamt0rBSMEdrDM6ll7HFV8A2UbRwTRMZZhGrx4oTXp2TG2ZxT49NF1CPyZMCkKwsitqGUultgUfeL6KS8zwRmCyRvo8btAvDR+UFWK4WMf7gMw1AyuBgKrTBiKotPa623BS8NGxhRrx40c3GMYVvxRJR0QRvwQ1lQIAKwVAIDgGQ9tIcjoao0aQ16tw6KDNmBxGuYORhWbun0PkNEJurKBoehpeirqfE5bsfBmRYPC-NHsecDFmJ8OKdGvfXFuKF54hNmnWyY8d5kMKEpi-NwcbRj7ISUe9TCcuK5rWBb9qwn2LtN2nRvZWjHoYjLneFPkOWjCFu2D2ZXHZD2U9U1UNW1PVDWNM0LQgX2jNpjltGMAYvGWaVsbmQx42FDKJkfPvuj0DEmL1+b+Jr7MfI3J0t2LdurtbUaOQHTH3FDX9+TvYVUVfPkJT8GMEyY-8k4XwHa5E9T8LXDeYfaeKDGWadcr7wVWPNtyCUwZwTBz0CseeAMQKp1VMvKAZNwJt3Tn7YEmgd7GHjF+DwoZ0S-hPkOMgPc4pcl-OzX81cH4NSoG-WWeNJiCmHh0XQFlDAjSRJ0cYvRGYhi-KYCBd8oGYWwAgyANCupxycC+ZY2VK5DzYebDBbgZjQkxtyCh0CSZwX8ogsRmdxTjwhGYeMz12bClipyHmHRBzTE8MHCBgQgA */
+/** @xstate-layout N4IgpgJg5mDOIC5QBkD2UCWA7AsgQwGMALbMAOmwwBcM8AbAYmQHkBxASQDkBtABgF1EoAA6pY1DKixCQAD0QB2ABxkFARgBsCjQE4dAFiUBmXjoBMRgDQgAnogC0agKxGyGtQqP7e+s06XOCgC+QdZomLiEJFjkdOgRUOxYDBBS5NgAbqgA1uTh2PjEpGRxUAlJCJmoBHg0Unz8DTKi4nXSSHKITvpkah4KOgoKvErdRp7WdghqvGq9g57+fbM6GvohYegFUcWl5clgAE6HqIdkwnS1AGanALZk+ZFFMSXx2IlYlVhZNW0NTR0WhIpDJ5AgzPpXMMNGZBs4lIYlMpJg5XGojIMjGokU4nO4sRsQI9CtFyDAqDQsFAACK1PApNIUb45PJbJ6ksjkyk0ulfH61SRYf4CZpiYHtUBg7q9DwBbGwkxmHwohDjMxkIyazX6XQBLyE4k7F5c960qj0o4nM4Xa53B5sknFE1Us14PnVAX1AQAkRitqgxCa9W8GH+VZqHQYpS8BQqiPqsyeby6iFmbFKA0Oo2xeKQJJMNjMACqABUfSAgf6OmDHLxXDHeN1YX4zKNunGBqozGmtINump9M5MxFHS89nmsGQAGoYMAAd3eAAJabAiAAjVB4Q4QBgAUQg1EXAAUTlcMHQwOXK4KAwhcWQ9CGfI3TJ5E04VRolCpYcokdpBh0IdQiJLNnhzMoJzIfcJCpY9T3PMAGAAZTwDIwAAYSIPAqTgK8-RvasHAjDVBg0WZYRhYwnDMDQVW-OZvzxAZo10OsdGHbZwNeSCICSaCD25eDUDPC8GGpDBYBqbd8NaQjJVRdUnB8GZ1HUJxhjrFUFH0BRVCUXQtBbFxZk49ldlzPjJ0OMAAEcAFc4CoGCqAZF4qlye0R2zHiYCssgbIcpyXPdX5BWFQRAQIkEiIQRxfH08wtA0zwNC-WNbEQGZnDICFDOUNjeG7MzRwgvz+MCxzYGcwSGEtU5zkuKgbkOe5DW48d-Mq4LBNCz0hW9EUorkmKFOmXQH0hbRdJjUYsSUejjFI5TfAM-wNCcDiQPajlOv4lz3l3Y5TkgBgACVdxLM6AE1ZPFW8I1cCF-H8fRDE2pF9G0xsHyAzQ1iKvp-BKny9neZh7Nc1J3OZTydosspwchvq-kGyLfRGiVOji5w5j+qi-FMBEFsyuK-B6OE1FoowGLxYrtrA3a3ipCHXPq60mpatrGYRhJWZR8K0dFTHb3sbsNAfWbzDrPFVKsUn7GUsgnGxGajHJt8zBBjq2SOq1Touq7bqGjH7tikxeFyr8NLepUhimlUxbWX79DxGjcXTYxtaZqBUEhvWTp3Q2bruqsxrFn60o0nwXFlmN5amHQVHWpRaOjQZB0HEIQKwVAIDgGR4ZiYWzfDxMKalpUjDj7RHer9Uk6McigPtxZggZ7zuMoGh6BLsPselJ9uiGbKET0R3aKcMhDCb2ZumjAYfG93n3iSPv5OxnVcte2EI0fBR3Yny26aRNLy6-Irl+NMAKVNOl19GzeJb8BFd70HQY0P0mLDmLVtSxBQfgDBXzKhOB+WMawRktsoJKB8hhN3Siqd209AEmEHAfGE1cQG+SgjOecS4Vzrk3NucBD0JaQibniHQKsdJflop+KmD5UH6D0Crfe2C9qTgOnBE8IlEKkNio4OYtEDDqDVNoCMGUpgLwfNiIYGCkRAQ4ZZCqdkqo1WoAIsa5g3CaFdk3D+BhG5xiKlPdQ35yYaSAuMZRvF9qCUOsdGyEAtHYw8M-DE5E6xKlWGmBOigdJkF4D4ZKmokTYlsXzSGrjIHfl6LiFhqdVhTS+grDwwZVbaC0Cw8w6wO5cR9tgAOziYmIHLigtKb0WHBJlqkqYjhpQYhjEMOEBhGy2L9s5JxkBSlkzTBqEM6tqHV3cPHOMKgRh0IvhnAcEJs5BCAA */
 createMachine({
     initial:"initial",
     context: {
@@ -35,9 +37,23 @@ createMachine({
                     target: "loginErrored",
                     actions: 'assignErr',
                 }],
-                onDone: [{
+                onDone: {
+                    target: "gettingData",
+                    actions: 'alertLogger'
+                    //actions: ['assignUserData','alertLogin']
+                }
+            }
+        },
+        gettingData: {
+            invoke:{
+                src:'tryGetData',
+                onDone: {
                     target: "loggedIn",
                     actions: ['assignUserData','alertLogin']
+                },
+                onError: [{
+                    target: "loginErrored",
+                    actions: 'assignErr',
                 }]
             }
         },
@@ -112,7 +128,8 @@ createMachine({
             on: {
                 RETRY: "loggedIn"
             }
-        }
+        },
+
     },
 
     id: "LoginMachine"
@@ -127,6 +144,9 @@ createMachine({
         },
         alertSavedChanges: (context, event) => {
             alert("Saved changes successfully.")
+        },
+        alertLogger: (context, event) => {
+            alert("Login successful. Now fetching data...")
         },
         clrContext: assign({
             userData: {},
@@ -161,36 +181,47 @@ createMachine({
     services: {
         tryLogIn: async (context,event) => {
             try {
-                const res = await fetch('https://dummyjson.com/auth/login', {
+                const res = await fetch("https://dummyjson.com/auth/login", {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         username: context.cred.username,
                         password: context.cred.password,
-                        // username: 'kminchelle',
-                        // password: '0lelplR',
                     })
                 })
                 const res1 = await res.json()
-                console.log('API RESPONSE - ');
-                console.log(res1)
-                if(!res1.username && res1.message){
-                    //when invalid credentials
-                    throw Error(res1.message)
-                }
+                if(!res1.username && res1.message)
+                    throw new Error(res1)
                 return res1;
             } 
             catch (error) {
-                console.log('CATCH BLOCK- ');
-                console.log('Error message - ');
-                console.log(JSON.stringify(error.message))
+                console.log(error.message)
                 throw Error(error.message)
             }
         },
-
+        tryGetData: async (context,event) => {
+            try {
+                const res = await fetch("https://dummyjson.com/auth/login", {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        username: context.cred.username,
+                        password: context.cred.password,
+                    })
+                })
+                const res1 = await res.json()
+                if(!res1.username && res1.message)
+                    throw new Error(res1)
+                return res1;
+            } 
+            catch (error) {
+                console.log(error.message)
+                throw Error(error.message)
+            }
+        },
         tryLogOut: async (context,event) => {
             try {
-                const res = await fetch('https://dummyjson.com/auth/login', {
+                const res = await fetch("https://dummyjson.com/auth/login", {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
@@ -211,7 +242,7 @@ createMachine({
 
         tryEdit: async (context,event) => {
             try {
-                const res = await fetch('https://dummyjson.com/auth/login', {
+                const res = await fetch("https://dummyjson.com/auth/login", {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
